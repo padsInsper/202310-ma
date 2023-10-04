@@ -15,9 +15,9 @@ Laboratórios de Marketing Analytics. Plano inicial:
   - Causalidade
   - Anova
   - Exercício
-- **Lab 2 (11/11, 13h-15h, presencial)**
+- **Lab 2.1 (11/11, 13h-15h, presencial)**
   - Trabalho final -- análise inicial
-- **Lab 3.1 (16/11, 19h-21h, remoto)**: Multivariada
+- **Lab 2.2 (16/11, 19h-21h, remoto)**: Multivariada
   - PCA
   - Cluster Hierárquico
 - **Lab 3.2 (29/11, 19h-22h30)**: Logit e série temporal
