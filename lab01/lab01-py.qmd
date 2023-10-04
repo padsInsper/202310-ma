@@ -1,0 +1,18 @@
+---
+title: "Untitled"
+format: html
+---
+
+
+```{python}
+
+import pandas as pd
+
+cars = pd.read_parquet('cars.parquet')
+
+```
+
+
+```{python}
+
+```

@@ -1,0 +1,142 @@
+---
+title: exercicios
+format: html
+---
+
+## Pacotes
+
+```{r}
+library(tidyverse) # manipulacao de data.frame
+library(MASS) # dados Boston
+library(broom)
+```
+
+
+
+## Dados
+
+O banco de dados `Boston` apresenta registros de valores medianos das casas (`medv`) de 506 bairros de Boston.
+O objetivo é identificar quais das 13 variáveis explicativas estão associadas com esses valores e usá-las para fazer predições de preços das casas.
+
+```{r}
+glimpse(Boston)
+```
+
+```{r}
+# Descrição das variáveis
+help(Boston)
+```
+
+## Exercício 1
+
+Faça um gráfico de dispersão entre `medv` e `rm`.
+
+```{r}
+ggplot(Boston, aes(x = rm, y = medv)) +
+  geom_point()
+```
+
+## Exercício 2
+
+Ajuste um modelo de regressão linear simples utilizando `medv` como resposta e `rm` como explicativa e guarde em objeto chamado `mod_simples`. Consulte o `summary(mod_simples)` em seguida.
+
+```{r}
+mod_simples <- lm(medv ~ rm, data = Boston)
+summary(mod_simples)
+```
+
+## Exercício 3
+
+Sabendo que `medv` é o preço mediano das habitações do bairro e o `rm` é o número médio de quartos por habitação,
+
+a) interprete o parâmetro `(Intercept)`.
+
+O parâmetro de `(Intercept)` significa que, mantendo todas as outras variáveis constantes, o preço mediano das habitações do bairro é de -34.67 unidades monetárias quando o número médio de quartos por habitação é igual a zero.
+
+
+b) interprete o parâmetro `rm`.
+
+O parâmetro de `rm` significa que, mantendo todas as outras variáveis constantes, o preço mediano das habitações do bairro aumenta em 9.102 unidades monetárias para cada aumento de uma unidade no número médio de quartos por habitação.
+
+c) o número de quartos está associado com o valor da habitação? Por quê?
+
+Sim, pois o p-valor do teste de hipótese para o parâmetro de `rm` é menor que 0.05. Ou seja, a evidência dos dados é suficiente para rejeitar a hipótese nula de que o parâmetro de `rm` é igual a zero. Portanto, o número de quartos está associado com o valor da habitação.
+
+BURRO
+
+## Exercício 4
+
+Consulte as saídas das funções
+
+- `coef(mod_simples)`
+- `confint(mod_simples)`
+- `predict(mod_simples)`
+- `predict(mod_simples, interval = "confidence")`
+- `augment(mod_simples)`
+
+```{r}
+coef(mod_simples)
+confint(mod_simples)
+predict(mod_simples)
+predict(mod_simples, interval = "confidence")
+augment(mod_simples)
+```
+
+## Exercício 5
+
+Usando o data.frame gerado por `augment(mod_simples)` faça um gráfico de `medv` versus `rm` e em seguida desenhe a reta ajustada do `mod_simples`.
+
+```{r}
+augment(mod_simples) %>%
+  ggplot(aes(x = rm, y = medv)) +
+  geom_point() +
+  geom_line(aes(y = .fitted), color = "red")
+
+
+```
+
+## Exercício 6
+
+Faça um gráfico de resíduos. Coloque os **resíduos** no eixo Y e os **valores ajustados** no eixo X.
+
+```{r}
+augment(mod_simples) %>%
+  ggplot(aes(x = .fitted, y = .resid)) +
+  geom_point()
+```
+
+
+## Exercício 7
+
+Observe os gráficos de `plot(mod_simples)`.
+
+```{r}
+#| eval: false
+plot(mod_simples)
+```
+
+Apenas pela inspeção visual, responda: existem outliers? Eles são pontos de alavanca?
+
+## Exercício 8
+
+Ajuste um modelo `mod_multiplo` para `medv` explicado por `rm` e `crim`. Consulte o `summary(mod_multiplo)` em seguida.
+
+```{r}
+mod_multiplo <- lm(medv ~ rm + crim, data = Boston)
+```
+
+
+## Exercício 9
+
+Qual modelo ficou melhor: `mod_simples` ou `mod_multiplo`? Qual critério você utilizou para decidir o melhor?
+
+
+## Exercício 10
+
+Ajuste um modelo `mod_completo` para `medv` explicado por todas as demais colunas. DICA: na fórmula `medv ~ .`, o ponto significa "todas as variáveis, tirando medv".
+
+a) Consulte o `summary(mod_completo)` em seguida.
+b) Qual modelo ficou melhor: `mod_simples`, `mod_multiplo` ou `mod_completo`?
+c) O valor estimado para o termo `rm` variou entre os três modelos? Por qual razão você acha que isso aconteceu?
+
+
