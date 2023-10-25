@@ -54,10 +54,3 @@ e) `augment(mod_simples)`
 
 8. Qual modelo ficou melhor: `mod_simples` ou `mod_multiplo`? Qual critério você utilizou para decidir o melhor?
 
-9. Ajuste um modelo `mod_completo` para `medv` explicado por todas as demais colunas. DICA: na fórmula `medv ~ .`, o ponto significa "todas as variáveis, tirando medv".
-
-a) Consulte o `summary(mod_completo)` em seguida.
-b) Qual modelo ficou melhor: `mod_simples`, `mod_multiplo` ou `mod_completo`?
-c) O valor estimado para o termo `rm` variou entre os três modelos? Por qual razão você acha que isso aconteceu?
-
-
