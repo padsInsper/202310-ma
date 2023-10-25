@@ -26,6 +26,10 @@ Os dados do `EnerDrink` foram levantados para representar os resultados desta ca
   - **trt1**: Tratamento 1, onde foi aplicada uma estratégia de marketing digital intensiva, com anúncios em redes sociais e plataformas de vídeo.
   - **trt2**: Tratamento 2, onde foram utilizadas promoções no ponto de venda, como descontos e amostras grátis.
 
+```{r}
+enerdrink <- readr::read_csv("https://raw.githubusercontent.com/padsInsper/202310-ma/main/lab02/enerdrink.csv")
+```
+
 ### Exercícios
 
 1. **Análise Descritiva**: Calcule estatísticas descritivas para cada estratégia de marketing, incluindo média, variância, e desvio padrão do aumento percentual nas vendas.
