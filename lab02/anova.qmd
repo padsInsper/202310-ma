@@ -1,0 +1,598 @@
+---
+title: "Causalidade e Anova"
+subtitle: uma introdução
+institute: Insper
+format:
+  insper-revealjs:
+    self-contained: true
+    footer: |
+      Tema do [Insper](https://insper.edu.br/) para [Quarto](https://quarto.org/docs/presentations/revealjs/index.html). Código no [GitHub](https://github.com/padsInsper/quarto-insper-theme).
+date-format: long
+lang: pt
+---
+
+```{r setup}
+library(dados)
+```
+
+## Monty Hall
+
+```{r echo=FALSE, out.width="100%"}
+knitr::include_graphics("img/montyhallproblem.png")
+```
+
+## Paradoxo de Simpson
+
+```{r echo=FALSE, out.width="100%"}
+knitr::include_graphics("img/simpson1.png")
+```
+
+## Paradoxo de Simpson
+
+```{r echo=FALSE, out.width="100%"}
+knitr::include_graphics("img/simpson2.png")
+```
+
+## Paradoxo de Berkson
+
+```{r echo=FALSE, out.width="100%"}
+knitr::include_graphics("img/berkson.png")
+```
+
+## O que é causalidade?
+
+A pesquisa em causalidade busca descobrir uma relação funcional entre duas ou mais variáveis. Por exemplo:
+
+$$
+y = f(x) = a + bx
+$$
+
+No mundo real, observamos essa relação com ruídos. O importante é que esse ruído não tenha relação com outras variáveis que explicam o fenômeno. Exemplo:
+
+$$
+y = f(x) = a + bx + \varepsilon, \ \ \varepsilon\sim\mathcal N(0,\sigma^2)
+$$
+
+## Três passos da causalidade
+
+Vamos pensar em um problema onde estamos estudando se a grama fica molhada, observando o céu e um regador.
+
+. . .
+
+- __Predição__: 1) dado que eu observei o regador funcionando, qual a probabilidade da grama estar molhada? 2) dado que eu observei o céu nublado, qual a probabilidade da grama estar molhada?
+
+. . .
+
+- __Intervenção__: 1) se eu girar o regador, qual a probabilidade da grama se molhar? 2) Se eu fizer a dança da chuva, qual a probabilidade da grama se molhar?
+
+. . .
+
+- __Contrafactual__: 1) Sabendo que eu observei o regador desligado e o chão seco, como provavelmente estaria o chão se eu tivesse ligado o regador? 2) Sabendo que eu observei o céu azul e o chão seco, como provavelmente estaria o chão se eu tivesse feito a dança da chuva?
+
+## Judea Pearl
+
+```{r, echo=FALSE, out.width="100%"}
+knitr::include_graphics("img/judeapearl.png")
+```
+
+## Três estruturas básicas
+
+. . .
+
+### Mediadores
+
+A -> B -> C
+
+. . .
+
+### Confundidores / garfos
+
+A <- B -> C
+
+. . .
+
+### Colisores
+
+A -> B <- C
+
+## Importância em regressão - mediador {.smaller .scrollable}
+
+```{dot}
+//| fig-width: 4
+//| fig-height: 2
+digraph lr {
+  # a 'graph' statement
+  rankdir=LR
+  node [shape = circle, fixedsize = true, width = 0.9]
+  X1;X2;Y;
+
+  # several 'edge' statements
+  X1->X2;X2->Y
+}
+```
+
+
+```{r echo=TRUE}
+n <- 1000
+x1 <- rnorm(n)
+x2 <- 1 + x1 + rnorm(n)
+y <- 1 + x2 + rnorm(n)
+```
+
+. . .
+
+```{r echo=TRUE}
+modelo <- lm(y ~ x2)
+coef(modelo)
+```
+
+. . .
+
+```{r echo=TRUE}
+modelo <- lm(y ~ x1)
+coef(modelo)
+```
+
+. . .
+
+
+```{r echo=TRUE}
+modelo <- lm(y ~ x1 + x2)
+coef(modelo)
+```
+
+
+## Importância em regressão - confundidor {.smaller}
+
+```{dot}
+//| fig-width: 4
+//| fig-height: 2
+digraph lr {
+  # a 'graph' statement
+  rankdir=LR
+  node [shape = circle, fixedsize = true, width = 0.9]
+  X1;X2;Y;
+
+  # several 'edge' statements
+  X1->X2;X1->Y;X2->Y
+}
+```
+
+```{r echo=TRUE}
+n <- 1000
+x1 <- rnorm(n)
+x2 <- 1 + 2 * x1 + rnorm(n)
+y <- 1 + x1 + x2 + rnorm(n)
+
+modelo <- lm(y ~ x1)
+coef(modelo)
+```
+
+. . .
+
+```{r}
+#| echo: true
+modelo <- lm(y ~ x1 + x2)
+coef(modelo)
+```
+
+## Importância em regressão - colisor {.smaller .scrollable}
+
+```{dot}
+//| fig-width: 4
+//| fig-height: 2
+digraph lr {
+  # a 'graph' statement
+  rankdir=LR
+  node [shape = circle, fixedsize = true, width = 0.9]
+  X2;Y;
+
+  node [shape = circle, fixedsize = true, width = 0.9, color=red]
+  X1
+
+  # several 'edge' statements
+  Y->X1;X2->X1
+}
+```
+
+
+```{r, echo=TRUE}
+x2 <- rnorm(n)
+y <- rnorm(n)
+x1 <- 1 + 2 * x2 + 3 * y + rnorm(n)
+```
+
+. . .
+
+
+```{r, echo=TRUE}
+lm(y ~ x2) |>
+  summary() |>
+  broom::tidy()
+```
+. . .
+
+
+```{r, echo=TRUE}
+lm(y[x1 > 1] ~ x2[x1 > 1]) |>
+  summary() |>
+  broom::tidy()
+```
+
+# Paradoxos
+
+## Monty Hall
+
+```{r echo=FALSE, out.width="100%"}
+knitr::include_graphics("img/montyhallproblem.png")
+```
+
+## Colisor!
+
+```{dot}
+//| fig-width: 8
+//| fig-height: 5
+digraph lr {
+  # a 'graph' statement
+  rankdir=LR
+  node [shape = circle, fixedsize = true, width = 0.9]
+  Escolha1;Carro;
+
+  node [shape = circle, fixedsize = true, width = 0.9, color=red]
+  Apres
+
+  # several 'edge' statements
+  Escolha1->Apres;Carro->Apres
+}
+```
+
+## Paradoxo de Berkson
+
+```{r echo=FALSE, out.width="100%"}
+knitr::include_graphics("img/berkson.png")
+```
+
+## Colisor!
+
+```{dot}
+//| fig-width: 8
+//| fig-height: 5
+digraph lr {
+  # a 'graph' statement
+  rankdir=LR
+  node [shape = circle, fixedsize = true, width = 0.9]
+  Doenca1;Doenca2;
+
+  node [shape = circle, fixedsize = true, width = 0.9, color=red]
+  Hospital
+
+  # several 'edge' statements
+  Doenca1->Hospital;Doenca2->Hospital
+}
+```
+
+## Paradoxo de Simpson
+
+```{r echo=FALSE, out.width="100%"}
+knitr::include_graphics("img/simpson1.png")
+```
+
+## Paradoxo de Simpson
+
+```{r echo=FALSE, out.width="100%"}
+knitr::include_graphics("img/simpson2.png")
+```
+
+## Confundimento!
+
+```{dot}
+//| fig-width: 8
+//| fig-height: 5
+
+digraph lr {
+  # a 'graph' statement
+  rankdir=LR
+  node [shape = circle, fixedsize = true, width = 0.9]
+  IdadeSex;Tratamento;
+
+  node [shape = circle, fixedsize = true, width = 0.9, color=red]
+  Melhorar
+
+  # several 'edge' statements
+  Tratamento->Melhorar;IdadeSex->Tratamento;IdadeSex->Melhorar
+}
+```
+
+
+. . .
+
+Nesse caso, temos de controlar por Idade e sexo
+
+:::{.notes}
+https://webia.lip6.fr/~phw/aGrUM/BookOfWhy/
+:::
+
+## Outro exemplo!
+
+```{r echo=FALSE, out.width="100%"}
+knitr::include_graphics("img/simpson3.png")
+```
+
+## Confundimento!
+
+```{dot}
+//| fig-width: 8
+//| fig-height: 5
+digraph lr {
+  # a 'graph' statement
+  rankdir=LR
+  node [shape = circle, fixedsize = true, width = 0.9]
+  Pressao;Tratamento;
+
+  node [shape = circle, fixedsize = true, width = 0.9, color=red]
+  Melhorar
+
+  # several 'edge' statements
+  Tratamento->Melhorar;Tratamento->Pressao;Pressao->Melhorar
+}
+```
+
+. . .
+
+Nesse caso, não é para controlar por pressão
+
+## Modelos conhecidos
+
+- [Diff in Diff](https://diff.healthpolicydatascience.org/#confounding)
+- [Causalidade de Granger](https://www.statology.org/granger-causality-test-in-r/)
+- [Variável instrumental](https://rstudio-pubs-static.s3.amazonaws.com/195619_f2b6ccddabdc4f3f8a168e1a7f328829.html#)
+
+# Anova
+
+## Os passos da ANOVA
+
+::: {.incremental}
+
+- Definir o que você quer fazer
+- Controle e grupos
+- Definir modelo
+- Testar se existe diferença entre os grupos
+- Comparações múltiplas
+
+:::
+
+## As funções da ANOVA
+
+- `lm()` ajusta um modelo linear.
+
+. . .
+
+- `anova()` serve para testar __modelos encaixados__.
+
+. . .
+
+- `aov()` é como se fosse `anova()` + `lm()` juntos.
+
+. . .
+
+- Para testes múltiplos, utilizamos `tukeyHSD()`.
+
+
+## Qual a ideia do ANOVA? {.scrollable}
+
+$$
+SQT = SQR + SQE
+$$
+
+- $SQT$: Soma de quadrados total $\sum_{ij}(y_{ij}-\bar y)^2$
+
+- $SQR$: Soma de quadrados dentro de cada grupo $\sum_{j}\sum_{i}(y_{ij}-\bar y_j)^2$. Quero que isso seja pequeno.
+
+- $SQE$: Soma de quadrados entre grupos $\sum_{j}(\bar y_{j}-\bar y)^2$. Quero que isso seja grande.
+
+. . .
+
+A estatística de teste é dada por
+
+$$
+\frac{SQE / gl_E}{SQR / gl_R}
+$$
+
+## Comparando `aov()` e `lm()` {.smaller .scrollable}
+
+::: {.panel-tabset}
+
+### `aov()`
+
+`aov()` testa o fator todo de uma vez.
+
+```{r, echo=TRUE}
+modelo_aov <- aov(comprimento_bico ~ ilha, data = pinguins)
+broom::tidy(modelo_aov)
+```
+
+### `lm()`
+
+`lm()` testa cada nível do fator individualmente
+
+```{r, echo=TRUE}
+modelo_lm <- lm(comprimento_bico ~ ilha, data = pinguins)
+broom::tidy(modelo_lm)
+```
+
+:::
+
+## Como se relacionam? {.smaller .scrollable}
+
+É possível reproduzir o comportamento de `aov()` com a utilização de `lm()`, um modelo nulo e `anova()`
+
+```{r, echo=TRUE}
+modelo_lm <- lm(comprimento_bico ~ ilha, data = pinguins)
+modelo_lm_nulo <- lm(comprimento_bico ~ 1, data = pinguins)
+
+# Anova serve para comparar modelos
+comparacao_modelos <- anova(modelo_lm, modelo_lm_nulo)
+comparacao_modelos
+broom::tidy(comparacao_modelos)
+```
+
+## Outros comandos
+
+Outros comandos úteis são:
+
+```{r, eval=TRUE, echo=FALSE, results='asis'}
+comandos_uteis_lm <- data.frame(
+  "Função" = c(
+    "`confint()`",
+    "`resid()`",
+    "`fitted()`",
+    "`AIC()`",
+    "`model.matrix()`",
+    "`linearHypotesis()`",
+    "`vcov()`"
+  ),
+  "Descrição" = c(
+    "Intervalo de confiança para os parâmetros",
+    "Resíduos do modelo",
+    "Valores ajustados",
+    "Critério de informação de Akaike",
+    "Matriz de planejamento (matriz X) do modelo",
+    "Teste de combinações lineares de parâmetros",
+    "Matriz de variância-covariância dos parâmetros")
+)
+knitr::kable(comandos_uteis_lm)
+```
+
+# Fórmulas
+
+## Fórmulas {.scrollable}
+
+Objetos de classe `formula` possuem sintaxe muito conveniente para especificar o modelo estatístico que desejamos ajustar. O símbolo que define esses objetos é o `~`.
+
+. . .
+
+Estrutura:
+
+```{r, eval=FALSE, echo=TRUE}
+ajuste <- lm(resposta ~ explicativas)
+```
+
+Então se o objetivo fosse ajustar o modelo
+
+$$
+Y_i = \beta_0 + \beta_1X_i + \varepsilon_i,
+$$
+
+passaríamos ao R a seguinte fórmula
+
+```{r, eval=FALSE, echo=TRUE}
+ajuste <- lm(Y ~ X)
+```
+
+. . .
+
+Para incorporar mais variáveis usamos o símbolo `+`. O modelo
+
+$$
+Y_i = \beta_0 + \beta_1X_i + \beta_2Z_i + \varepsilon_i,
+$$
+
+ficaria traduzido como
+
+```{r, eval=FALSE, echo=TRUE}
+ajuste <- lm(Y ~ X + Z)
+```
+
+## Os operadores `*` e `:` {.scrollable}
+
+Utilizamos o símbolo `*` para introduzir os componentes de interação, além dos componentes aditivos.
+
+```{r, eval=FALSE, echo=TRUE}
+ajuste <- lm(Y ~ X * Z)
+```
+
+. . .
+
+Teoricamente teríamos, para Z **contínua**, o modelo de regressão
+
+$$
+Y_i = \beta_0 + \beta_1X_i + \beta_2Z_i + \beta_3X_i*Z_i + \varepsilon_i,
+$$
+
+
+ou, para Z **categórica**, o modelo de ANCOVA
+
+$$
+Y_{ij} = \alpha_j + \beta_jX_{ij} + \varepsilon_{ij},
+$$
+
+
+. . .
+
+O operador `:` faz com que apenas o componente de interação seja incluído no modelo. O modelo
+
+```{r, eval=FALSE, echo=TRUE}
+ajuste <- lm(Y ~ X * Z)
+```
+
+é o mesmo que
+
+```{r, eval=FALSE, echo=TRUE}
+ajuste <- lm(Y ~ X + Z + X:Z)
+```
+
+## Operadores aritméticos {.smaller}
+
+Os operadores aritméticos exercem funções diferentes em fórmulas.
+
+O sinal de `+` no exemplo induziu em um modelo aditivo em vez de somar X com Z. Para fazer com que eles assumam seus significados aritméticos temos que utilizar a função `I()`.
+
+Exemplo:
+
+```{r, eval=FALSE, echo=TRUE}
+ajuste <- lm(Y ~ I(X + Z))
+```
+
+Agora sim o componente `I(X + Z)` representa a soma de X com Z. Outros exemplos: `I(X^2)`, `I(log(X + 1))`, `I(sqrt(X+Z*5))`.
+
+## Tabela de símbolos {.smaller}
+
+```{r}
+formula_simbolos <- data.frame(
+  "Símbolo" = c(
+    "`+ X`",
+    "`- X`",
+    "`X * Z`",
+    "`X : Z`",
+    "`(X + Z + W)^2`",
+    "`I(X + Z)`",
+    "`X - 1`",
+    "`.`"
+  ),
+  "Descrição" = c(
+    "inclui a variável X",
+    "retira a variável X",
+    "inclui X, Z e a interação entre elas",
+    "inclui apenas o componente de interação entre X e Z",
+    "inclui X, Z, W e as interações 2 a 2",
+    "Função identidade. Inclui uma variável construída pela soma de X com Z",
+    "Remove o intercepto (regressão passando pela origem)",
+    "O ponto representa 'todas as demais variáveis'"
+  )
+)
+knitr::kable(formula_simbolos)
+```
+
+## linearHypothesis e contrastes {.smaller}
+
+Frequentemente temos interesse em saber se parâmetros são diferentes de zero ou se são diferentes entre si. Para isto, costumamos efetuar testes do tipo Wald para combinações lineares dos parâmetros.
+
+Para este fim, a função `linearHypothesis()` do pacote `car` faz o trabalho.
+
+## Comparações múltiplas {.smaller}
+
+Outra alternativa é utilizar os testes pareados de Tukey. Nesse caso os valores-p já são ajustados.
+
+```{r}
+TukeyHSD(modelo_aov)
+```

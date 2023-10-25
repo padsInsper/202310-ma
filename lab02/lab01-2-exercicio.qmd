@@ -1,0 +1,45 @@
+---
+title: "Exercício - ANOVA"
+date: today
+format:
+  html:
+    code-fold: true
+    embed-resources: true
+---
+
+## Pacotes
+
+```{r}
+library(tidyverse) # manipulacao de data.frame
+library(broom)
+```
+
+### Campanha de Marketing para uma Nova Linha de Bebidas Energéticas
+
+A empresa "EnerDrink" decidiu lançar uma nova linha de bebidas energéticas direcionadas a jovens profissionais e estudantes universitários. A fim de otimizar a estratégia de marketing para este produto, a empresa realizou uma campanha piloto em 30 lojas em diferentes regiões.
+
+Os dados do `EnerDrink` foram levantados para representar os resultados desta campanha piloto, onde:
+
+- `weight`: Representa o aumento percentual nas vendas (em comparação com a média de vendas de outras bebidas na mesma categoria) durante o período da campanha.
+- `group`: Representa o tipo de estratégia de marketing aplicada:
+  - **ctrl**: Grupo de controle, onde não foi aplicada nenhuma estratégia de marketing especial.
+  - **trt1**: Tratamento 1, onde foi aplicada uma estratégia de marketing digital intensiva, com anúncios em redes sociais e plataformas de vídeo.
+  - **trt2**: Tratamento 2, onde foram utilizadas promoções no ponto de venda, como descontos e amostras grátis.
+
+### Exercícios
+
+1. **Análise Descritiva**: Calcule estatísticas descritivas para cada estratégia de marketing, incluindo média, variância, e desvio padrão do aumento percentual nas vendas.
+
+2. **Visualização**: Crie um gráfico de barras que mostre o aumento percentual médio nas vendas para cada estratégia de marketing, incluindo barras de erro que representem o desvio padrão.
+
+3. **Ajuste de Modelo**: Ajuste um modelo de regressão linear para investigar o impacto das diferentes estratégias de marketing no aumento percentual nas vendas. Interprete os coeficientes para entender como cada estratégia se compara à estratégia de controle.
+
+4. **Diagnóstico do Modelo**: Utilize a função `plot()` para analisar os resíduos do modelo e verificar se eles estão distribuídos aleatoriamente em torno de zero, e se há outliers.
+
+5. **Inferência**: Examine o `summary()` do modelo de regressão linear e tire conclusões sobre a significância das estratégias de marketing. Compare essas conclusões com as análises visuais.
+
+6. **ANOVA**: Aplique o modelo ANOVA para testar se há diferenças significativas no aumento percentual nas vendas entre as diferentes estratégias de marketing.
+
+7. **Testes de Comparação Múltipla**: Realize testes de Tukey para comparações par-a-par entre as estratégias de marketing e identifique quais estratégias têm diferenças significativas no aumento percentual das vendas.
+
+8. **Conclusões**: Quais são as conclusões finais do estudo? Comente.

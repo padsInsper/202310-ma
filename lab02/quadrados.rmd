@@ -1,0 +1,98 @@
+---
+title: "ANOVA e regressão linear"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(dados)
+
+pinguins <- pinguins |>
+  tidyr::drop_na(comprimento_bico, ilha)
+
+```
+
+```{r}
+ajuste_lm <- lm(comprimento_bico ~ ilha, data = pinguins)
+ajuste_lm
+```
+
+```{r}
+# extrai os coeficientes ajustados
+coeficientes <- coef(ajuste_lm)
+ggplot(pinguins) +
+  aes(x = ilha, y = comprimento_bico) +
+  geom_boxplot() +
+  geom_jitter(width = .2)
+```
+
+### Calculando na mão
+
+```{r}
+# fazendo o teste na mão
+
+medias <- pinguins |>
+  group_by(ilha) |>
+  summarise(
+    n = n(),
+    media = mean(comprimento_bico),
+    sd = sd(comprimento_bico)
+  )
+
+media_geral <- mean(pinguins$comprimento_bico)
+
+SS_dentro <- pinguins |>
+  group_by(ilha) |>
+  mutate(
+    dif = comprimento_bico - mean(comprimento_bico),
+    dif2 = dif^2
+  ) |>
+  summarise(ss = sum(dif2)) |>
+  summarise(ss = sum(ss)) |>
+  pull(ss)
+
+
+SS_entre <- medias |>
+  mutate(
+    dif = media - media_geral,
+    dif2 = dif^2
+  ) |>
+  summarise(ss = sum(dif2 * n)) |>
+  pull(ss)
+
+SS_total <- pinguins |>
+  drop_na(comprimento_bico, ilha) |>
+  summarise(
+    media_geral = mean(comprimento_bico),
+    ss = sum((comprimento_bico - media_geral)^2)
+  ) |>
+  pull(ss)
+
+SS_dentro + SS_entre
+SS_total
+
+# graus de liberdade
+
+# total: n - 1
+# dentro: n - k
+# entre: k - 1
+
+gl_total <- sum(medias$n) - 1
+gl_dentro <- sum(medias$n - 1)
+gl_entre <- length(medias$n) - 1
+
+
+# estatistica de teste
+
+F_stat <- (SS_entre / gl_entre) / (SS_dentro / gl_dentro)
+
+scales::number(1 - pf(F_stat, gl_entre, gl_dentro), 1e-16)
+
+```
+
+```{r}
+aov(comprimento_bico ~ ilha, data = pinguins) |>
+  broom::tidy() |>
+  with(p.value[1]) |>
+  scales::number(1e-16)
+```

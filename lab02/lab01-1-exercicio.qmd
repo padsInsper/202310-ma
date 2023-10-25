@@ -1,0 +1,63 @@
+---
+title: exercicios
+format: html
+---
+
+## Pacotes
+
+```{r}
+library(tidyverse) # manipulacao de data.frame
+library(MASS) # dados Boston
+library(broom)
+```
+
+## Dados
+
+O banco de dados `Boston` apresenta registros de valores medianos das casas (`medv`) de 506 bairros de Boston.
+
+O objetivo é identificar quais das 13 variáveis explicativas estão associadas com esses valores e usá-las para fazer predições de preços das casas.
+
+```{r}
+glimpse(Boston)
+```
+
+```{r}
+# Descrição das variáveis
+help(Boston)
+```
+
+1. Faça um gráfico de dispersão entre `medv` e `rm`.
+
+2. Ajuste um modelo de regressão linear simples utilizando `medv` como resposta e `rm` como explicativa e guarde em objeto chamado `mod_simples`. Consulte o `summary(mod_simples)` em seguida.
+
+3. Sabendo que `medv` é o preço mediano das habitações do bairro e o `rm` é o número médio de quartos por habitação,
+
+a) interprete o parâmetro `(Intercept)`.
+b) interprete o parâmetro `rm`.
+c) o número de quartos está associado com o valor da habitação? Por quê?
+
+4. Explique o que são as saídas das operações:
+
+(se estiver fazendo em python, pesquise as funções equivalentes)
+
+a) `coef(mod_simples)`
+b) `confint(mod_simples)`
+c) `predict(mod_simples)`
+d) `predict(mod_simples, interval = "confidence")`
+e) `augment(mod_simples)`
+
+5. Faça um gráfico de `medv` versus `rm` e em seguida desenhe a reta ajustada do `mod_simples`. DICA: use o data.frame gerado por `augment(mod_simples)`
+
+6. Faça um gráfico de resíduos. Coloque os **resíduos** no eixo Y e os **valores ajustados** no eixo X. Como devemos interpretar esse gráfico?
+
+7. Ajuste um modelo `mod_multiplo` para `medv` explicado por `rm` e `crim`. Consulte o `summary(mod_multiplo)` em seguida. As variáveis são significantes?
+
+8. Qual modelo ficou melhor: `mod_simples` ou `mod_multiplo`? Qual critério você utilizou para decidir o melhor?
+
+9. Ajuste um modelo `mod_completo` para `medv` explicado por todas as demais colunas. DICA: na fórmula `medv ~ .`, o ponto significa "todas as variáveis, tirando medv".
+
+a) Consulte o `summary(mod_completo)` em seguida.
+b) Qual modelo ficou melhor: `mod_simples`, `mod_multiplo` ou `mod_completo`?
+c) O valor estimado para o termo `rm` variou entre os três modelos? Por qual razão você acha que isso aconteceu?
+
+
