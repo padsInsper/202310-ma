@@ -7,14 +7,13 @@ ui <- fluidPage(
   sidebarLayout(
     sidebarPanel(
       actionButton("start_game", "Start New Game"),
+      hr(),
       actionButton("door1", "Choose Door 1"),
       actionButton("door2", "Choose Door 2"),
       actionButton("door3", "Choose Door 3"),
-      conditionalPanel(
-        condition = "!is.null(chosen_door)",
-        actionButton("switch_door", "Switch Door"),
-        actionButton("stay_door", "Stay with Current Door")
-      )
+      hr(),
+      actionButton("switch_door", "Switch Door"),
+      actionButton("stay_door", "Stay with Current Door")
     ),
     mainPanel(
       textOutput("instruction"),
@@ -67,10 +66,11 @@ server <- function(input, output, session) {
       opened_door(sample(doors_to_open, 1))
     }
 
-    print(opened_door())
-    output$instruction <- renderText(paste("You chose door", chosen_door(),
-                                           ". Monty opened door", opened_door(),
-                                           ". Do you want to switch or stay?"))
+    output$instruction <- renderText(paste(
+      "You chose door", chosen_door(),
+      ". Monty opened door", opened_door(),
+      ". Do you want to switch or stay?"
+    ))
   }
 
   # Switch door
