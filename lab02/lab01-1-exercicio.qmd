@@ -48,9 +48,7 @@ e) `augment(mod_simples)`
 
 5. Faça um gráfico de `medv` versus `rm` e em seguida desenhe a reta ajustada do `mod_simples`. DICA: use o data.frame gerado por `augment(mod_simples)`
 
-6. Faça um gráfico de resíduos. Coloque os **resíduos** no eixo Y e os **valores ajustados** no eixo X. Como devemos interpretar esse gráfico?
+6. Ajuste um modelo `mod_multiplo` para `medv` explicado por `rm` e `crim`. Consulte o `summary(mod_multiplo)` em seguida. As variáveis são significantes?
 
-7. Ajuste um modelo `mod_multiplo` para `medv` explicado por `rm` e `crim`. Consulte o `summary(mod_multiplo)` em seguida. As variáveis são significantes?
-
-8. Qual modelo ficou melhor: `mod_simples` ou `mod_multiplo`? Qual critério você utilizou para decidir o melhor?
+7. Qual modelo ficou melhor: `mod_simples` ou `mod_multiplo`? Qual critério você utilizou para decidir o melhor?
 
