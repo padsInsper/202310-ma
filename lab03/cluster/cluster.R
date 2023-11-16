@@ -12,7 +12,7 @@ dados <- readxl::read_excel("dados/segmentation_office.xlsx", "SegmentationData"
 set.seed(1)
 nomes <- randomNames::randomNames(
   40, which.names = "first",
-  sample.with.replacement =FALSE
+  sample.with.replacement = FALSE
 )
 
 dados_cluster <- dados |>
@@ -29,11 +29,11 @@ h_clust <- hclust(distancias, method = "ward.D2")
 
 plot(h_clust, k = 4) # 🤢
 
-factoextra::fviz_dend(h_clust, k = 4) # 🤩
+factoextra::fviz_dend(h_clust, k = 3) # 🤩
 
 
 # separando clusters
-h_clust2 <- hcut(distancias, k = 3)
+h_clust2 <- hcut(distancias, k = 4)
 
 fviz_dend(h_clust2, rect = TRUE, cex = .8)
 
